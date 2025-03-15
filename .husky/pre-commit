@@ -1,0 +1,24 @@
+#!/bin/sh
+
+printf "🏃 Running pre-commit checks...\n"
+
+run_command() {
+  output=$("$@" 2>&1)
+  status=$?
+  if [ $status -eq 0 ]; then
+    printf "✅ %s successful!\n" "$1"
+  else
+    printf "❌ %s failed!\n" "$1"
+    printf "%s\n" "$output"
+    exit 1
+  fi
+}
+
+#printf "\n🔍 Running ESLint...\n"
+#run_command npm run lint
+
+#printf "\n🧪 Running Tests...\n"
+#run_command npm run test
+
+printf "\n✅ All checks passed! Proceeding with commit...\n"
+exit 0

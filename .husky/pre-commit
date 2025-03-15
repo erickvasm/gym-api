@@ -14,11 +14,18 @@ run_command() {
   fi
 }
 
-#printf "\n🔍 Running ESLint...\n"
-#run_command npm run lint
+printf "\n📝 Running Prettier..."
+run_command npm run format
 
-#printf "\n🧪 Running Tests...\n"
-#run_command npm run test
+printf "\n🔍 Running ESLint..."
+run_command npm run lint
 
-printf "\n✅ All checks passed! Proceeding with commit...\n"
-exit 0
+printf "\n🧪 Running Tests...\n"
+run_command npm run test
+
+if [ $? -eq 0 ]; then
+  prinf "\n✅ All checks passed! Proceeding with commit..."
+else
+  printf "\n❌ One or more checks failed. Aborting commit."
+  exit 1
+fi

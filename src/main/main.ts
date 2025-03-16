@@ -3,9 +3,12 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from '@/main/app.module';
 import { AuthGuard } from '@/main/auth/auth.guard';
 import { envConstants } from '@main/config/env-constants';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.useGlobalPipes(new ValidationPipe());
 
   const config = new DocumentBuilder()
     .setTitle('ERP Gym API')

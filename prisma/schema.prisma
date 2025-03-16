@@ -7,17 +7,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  ADMIN
+  TRAINER
+  STUDENT
+}
+
 model User {
   user_id  Int      @id @default(autoincrement())
   name     String
   email    String   @unique
-  role     String
+  role     UserRole
   password String
-  
-  gyms        Gym[]
-  payments    Payment[]
-  exercises   Exercise[]
-  students    Student[]
+
+  gyms      Gym[]
+  payments  Payment[]
+  exercises Exercise[]
+  students  Student[]
 }
 
 model Gym {
@@ -28,7 +34,7 @@ model Gym {
   schedule String
   owner_id Int    @unique
 
-  owner       User   @relation(fields: [owner_id], references: [user_id])
+  owner       User         @relation(fields: [owner_id], references: [user_id])
   memberships Membership[]
   classes     Class[]
   trainers    Trainer[]
@@ -44,15 +50,15 @@ model Membership {
   description   String
   gym_id        Int
 
-  gym       Gym      @relation(fields: [gym_id], references: [gym_id])
-  payments  Payment[]
+  gym      Gym       @relation(fields: [gym_id], references: [gym_id])
+  payments Payment[]
 }
 
 model Class {
-  class_id  Int      @id @default(autoincrement())
-  name      String
-  schedule  DateTime
-  trainer_id Int @unique
+  class_id   Int      @id @default(autoincrement())
+  name       String
+  schedule   DateTime
+  trainer_id Int      @unique
   gym_id     Int
 
   trainer Trainer @relation(fields: [trainer_id], references: [trainer_id])
@@ -71,7 +77,7 @@ model Trainer {
 }
 
 model Student {
-  student_id Int    @id @default(autoincrement())
+  student_id Int      @id @default(autoincrement())
   name       String
   birth_date DateTime
   user_id    Int
@@ -82,14 +88,14 @@ model Student {
 }
 
 model Payment {
-  payment_id     Int    @id @default(autoincrement())
+  payment_id     Int      @id @default(autoincrement())
   amount         String
   date           DateTime
   payment_method String
   user_id        Int
   membership_id  Int
 
-  user        User       @relation(fields: [user_id], references: [user_id])
+  user       User       @relation(fields: [user_id], references: [user_id])
   membership Membership @relation(fields: [membership_id], references: [membership_id])
 }
 

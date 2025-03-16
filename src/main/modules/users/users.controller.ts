@@ -8,16 +8,16 @@ import {
   Delete,
 } from '@nestjs/common';
 import { UsersService } from '@modules/users/users.service';
-import { CreateUserDto } from '@modules/users/dto/create-user.dto';
 import { UpdateUserDto } from '@modules/users/dto/update-user.dto';
+import { Prisma } from '@prisma/client';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  create(@Body() data: Prisma.UserCreateInput) {
+    return this.usersService.createUser(data);
   }
 
   @Get()

@@ -1,32 +1,90 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateUserDto } from '@modules/users/dto/update-user.dto';
 import { PrismaService } from '@/main/db/prisma.service';
 import { User } from '@prisma/client';
 import { CreateUserDto } from '@modules/users/dto/create-user.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   async createUser(data: CreateUserDto): Promise<User> {
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+
     return this.prisma.user.create({
-      data,
+      data: {
+        ...data,
+        password: hashedPassword,
+      },
     });
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll(): Promise<User[]> {
+    return this.prisma.user.findMany({
+      include: {
+        gyms: true,
+        payments: true,
+        exercises: true,
+      },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: number): Promise<User> {
+    const user = await this.prisma.user.findUnique({
+      where: { user_id: id },
+      include: {
+        gyms: true,
+        payments: true,
+        exercises: true,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+    return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    const userExists = await this.prisma.user.findUnique({
+      where: { user_id: id },
+    });
+    if (!userExists) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    if (updateUserDto.password) {
+      updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
+    }
+
+    return this.prisma.user.update({
+      where: { user_id: id },
+      data: updateUserDto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number): Promise<{ message: string }> {
+    const userExists = await this.prisma.user.findUnique({
+      where: { user_id: id },
+    });
+    if (!userExists) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    await this.prisma.user.delete({ where: { user_id: id } });
+    return { message: `User with ID ${id} deleted successfully` };
+  }
+
+  async getUserGyms(userId: number) {
+    return this.prisma.gym.findMany({
+      where: { owner_id: userId },
+    });
+  }
+
+  async getUserPayments(userId: number) {
+    return this.prisma.payment.findMany({
+      where: { user_id: userId },
+    });
   }
 }

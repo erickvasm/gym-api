@@ -1,6 +1,6 @@
 TO-DO:
 
 [ ] Users login authentication [reference](https://docs.nestjs.com/security/authentication)
-[ ] Users roles validation when create or update
-[ ] user validation request endpoint [reference](https://docs.nestjs.com/security/authorization)
+[] add logs  
+[ ] user authGuard en module son necesarios?
 [ ] husky don't work

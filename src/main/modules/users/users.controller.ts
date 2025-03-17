@@ -11,6 +11,8 @@ import { UsersService } from '@modules/users/users.service';
 import { UpdateUserDto } from '@modules/users/dto/update-user.dto';
 import { CreateUserDto } from '@modules/users/dto/create-user.dto';
 import { User } from '@prisma/client';
+import { Roles } from '@modules/users/roles/roles.decorator';
+import { Role } from '@modules/users/roles/role.enum';
 
 @Controller('users')
 export class UsersController {
@@ -40,6 +42,7 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @Roles(Role.Admin)
   async remove(@Param('id') id: string): Promise<{ message: string }> {
     return this.usersService.remove(Number(id));
   }

@@ -1,10 +1,8 @@
-import { NestFactory, Reflector } from '@nestjs/core';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from '@/main/app.module';
-import { AuthGuard } from '@/main/auth/auth.guard';
 import { envConstants } from '@main/config/env-constants';
 import { ValidationPipe } from '@nestjs/common';
-import { RolesGuard } from '@main/auth/roles.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,9 +18,6 @@ async function bootstrap() {
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, documentFactory);
-
-  app.useGlobalGuards(new AuthGuard());
-  app.useGlobalGuards(new RolesGuard(new Reflector()));
 
   await app.listen(envConstants.port ?? 3000);
 }

@@ -1,18 +1,21 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from '@modules/users/users.service';
 import { UpdateUserDto } from '@modules/users/dto/update-user.dto';
 import { CreateUserDto } from '@modules/users/dto/create-user.dto';
 import { User } from '@prisma/client';
-import { Roles } from '@modules/users/roles/roles.decorator';
-import { Role } from '@modules/users/roles/role.enum';
+import { Roles } from '@main/auth/roles/roles.decorator';
+import { Role } from '@main/auth/roles/role.enum';
+import { AuthGuard } from '@main/auth/authentication/auth.guard';
+import { RoleGuard } from '@main/auth/roles/roles.guard';
 
 @Controller('users')
 export class UsersController {
@@ -41,9 +44,11 @@ export class UsersController {
     return this.usersService.update(Number(id), updateUserDto);
   }
 
+  @Roles(Role.ADMIN)
+  @UseGuards(AuthGuard, RoleGuard)
   @Delete(':id')
-  @Roles(Role.Admin)
   async remove(@Param('id') id: string): Promise<{ message: string }> {
+    console.log('Entro al delete');
     return this.usersService.remove(Number(id));
   }
 

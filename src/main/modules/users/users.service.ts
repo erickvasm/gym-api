@@ -1,10 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UpdateUserDto } from '@modules/users/dto/update-user.dto';
 import { PrismaService } from '@/main/db/prisma.service';
 import { User } from '@prisma/client';
 import { CreateUserDto } from '@modules/users/dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
-import { BadRequestException } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
@@ -38,6 +41,14 @@ export class UsersService {
         gyms: true,
         payments: true,
         exercises: true,
+      },
+    });
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: {
+        email: email,
       },
     });
   }

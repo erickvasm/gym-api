@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AuthModule } from '@main/auth/auth.module';
+import { AuthJwtModule } from '@main/auth/authentication/auth.module';
 import { ExercisesModule } from '@modules/exercises/exercises.module';
 import { UsersModule } from '@modules/users/users.module';
 import { GymsModule } from '@modules/gyms/gyms.module';
@@ -9,7 +9,7 @@ import { PaymentsModule } from '@modules/payments/payments.module';
 
 @Module({
   imports: [
-    AuthModule,
+    AuthJwtModule,
     UsersModule,
     ExercisesModule,
     GymsModule,

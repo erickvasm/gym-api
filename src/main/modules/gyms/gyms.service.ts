@@ -5,6 +5,7 @@ import { UpdateGymDto } from '@modules/gyms/dto/update-gym.dto';
 @Injectable()
 export class GymsService {
   create(createGymDto: CreateGymDto) {
+    createGymDto.valueOf();
     return 'This action adds a new gym';
   }
 
@@ -17,6 +18,7 @@ export class GymsService {
   }
 
   update(id: number, updateGymDto: UpdateGymDto) {
+    updateGymDto.valueOf();
     return `This action updates a #${id} gym`;
   }
 

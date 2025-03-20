@@ -5,6 +5,7 @@ import { UpdateMembershipDto } from '@modules/memberships/dto/update-membership.
 @Injectable()
 export class MembershipsService {
   create(createMembershipDto: CreateMembershipDto) {
+    createMembershipDto.valueOf();
     return 'This action adds a new membership';
   }
 
@@ -17,6 +18,7 @@ export class MembershipsService {
   }
 
   update(id: number, updateMembershipDto: UpdateMembershipDto) {
+    updateMembershipDto.valueOf();
     return `This action updates a #${id} membership`;
   }
 

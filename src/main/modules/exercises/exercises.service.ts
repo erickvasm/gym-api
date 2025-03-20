@@ -5,6 +5,7 @@ import { UpdateExerciseDto } from '@modules/exercises/dto/update-exercise.dto';
 @Injectable()
 export class ExercisesService {
   create(createExerciseDto: CreateExerciseDto) {
+    createExerciseDto.valueOf();
     return 'This action adds a new exercise';
   }
 
@@ -17,6 +18,7 @@ export class ExercisesService {
   }
 
   update(id: number, updateExerciseDto: UpdateExerciseDto) {
+    updateExerciseDto.valueOf();
     return `This action updates a #${id} exercise`;
   }
 

@@ -21,6 +21,8 @@ import { RoleGuard } from '@main/auth/roles/roles.guard';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Roles(Role.TRAINER)
+  @UseGuards(AuthGuard, RoleGuard)
   @Post()
   async create(@Body() data: CreateUserDto): Promise<User> {
     return this.usersService.createUser(data);

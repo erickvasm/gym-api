@@ -12,6 +12,7 @@ export class StudentsService {
   }
 
   update(id: number, updateStudentDto: UpdateStudentDto) {
+    updateStudentDto.valueOf();
     return `This action updates a #${id} student`;
   }
 

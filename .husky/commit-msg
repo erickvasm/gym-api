@@ -1,3 +1,21 @@
-echo "\n📋 Checking commit messages..."
-npx --no-install commitlint --edit $1
+echo "🏃 Running commit checks..."
 
+run_command() {
+  echo "\n▶️ Running: $@"
+  output=$("$@" 2>&1)
+  status=$?
+  if [ $status -eq 0 ]; then
+    echo "✅ $1 successful!"
+  else
+    echo "❌ $1 failed!"
+    echo "--- Error Output ---"
+    echo "$output"
+    echo "--------------------"
+    return 1
+  fi
+}
+
+echo "\n📋 Checking commit message format..."
+run_command npx --no-install commitlint --edit "$1" || exit 1
+
+echo "\n✅ All checks passed! Proceeding with commit..."

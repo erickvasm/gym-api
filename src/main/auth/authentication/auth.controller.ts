@@ -6,11 +6,10 @@ import {
   HttpStatus,
   Post,
   Request,
-  UseGuards,
 } from '@nestjs/common';
 import { AuthJwtService } from '@main/auth/authentication/auth.service';
-import { AuthGuard } from '@main/auth/authentication/auth.guard';
 import { User } from '@prisma/client';
+import { Public } from '@main/auth/authentication/auth.public.route';
 
 @Controller('auth')
 export class AuthJwtController {
@@ -19,12 +18,12 @@ export class AuthJwtController {
   constructor(private authService: AuthJwtService) {}
 
   @HttpCode(HttpStatus.OK)
+  @Public()
   @Post('login')
   signIn(@Body() signInDto: Record<string, string>) {
     return this.authService.signIn(signInDto.email, signInDto.password);
   }
 
-  @UseGuards(AuthGuard)
   @Get('profile')
   getProfile(@Request() req: User) {
     return {

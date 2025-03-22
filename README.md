@@ -1,10 +1,5 @@
 TO-DO:
 
-[] refresh token
-[] add logs
-[ ] husky don't work
+[] jwt refresh token
 
-clean code
-prisma modile en cada modulo?
-auth guard
-jwt
+auth guard global and make @Public decorator

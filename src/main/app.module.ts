@@ -6,9 +6,11 @@ import { GymsModule } from '@modules/gyms/gyms.module';
 import { ClassesModule } from '@modules/classes/classes.module';
 import { TrainersModule } from '@modules/trainers/trainers.module';
 import { PaymentsModule } from '@modules/payments/payments.module';
+import { AccessControlModule } from '@main/auth/access/access.control.module';
 
 @Module({
   imports: [
+    AccessControlModule,
     AuthJwtModule,
     UsersModule,
     ExercisesModule,

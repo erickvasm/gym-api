@@ -14,8 +14,8 @@ import { CreateUserDto } from '@modules/users/dto/create-user.dto';
 import { User } from '@prisma/client';
 import { Roles } from '@main/auth/roles/roles.decorator';
 import { Role } from '@main/auth/roles/role.enum';
-import { AuthGuard } from '@main/auth/authentication/auth.guard';
 import { RoleGuard } from '@main/auth/roles/roles.guard';
+import { AuthGuard } from '@main/auth/authentication/auth.guard';
 
 @Controller('users')
 export class UsersController {

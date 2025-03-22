@@ -7,6 +7,9 @@ import { ClassesModule } from '@modules/classes/classes.module';
 import { TrainersModule } from '@modules/trainers/trainers.module';
 import { PaymentsModule } from '@modules/payments/payments.module';
 import { AccessControlModule } from '@main/auth/access/access.control.module';
+import { APP_GUARD } from '@nestjs/core';
+import { RoleGuard } from '@main/auth/roles/roles.guard';
+import { AuthGuard } from '@main/auth/authentication/auth.guard';
 
 @Module({
   imports: [
@@ -20,6 +23,9 @@ import { AccessControlModule } from '@main/auth/access/access.control.module';
     PaymentsModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    { provide: APP_GUARD, useClass: AuthGuard },
+    { provide: APP_GUARD, useClass: RoleGuard },
+  ],
 })
 export class AppModule {}

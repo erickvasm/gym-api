@@ -43,8 +43,6 @@ export class AuthGuard implements CanActivate {
         secret: envConstants.secret,
       });
       request.user = payload;
-      console.log('Payload JWT:', payload);
-      console.log('Request user:', request.user);
     } catch {
       throw new UnauthorizedException();
     }

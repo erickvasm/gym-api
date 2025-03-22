@@ -6,7 +6,6 @@ import {
   Param,
   Patch,
   Post,
-  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from '@modules/users/users.service';
 import { UpdateUserDto } from '@modules/users/dto/update-user.dto';
@@ -14,16 +13,13 @@ import { CreateUserDto } from '@modules/users/dto/create-user.dto';
 import { User } from '@prisma/client';
 import { Roles } from '@main/auth/roles/roles.decorator';
 import { Role } from '@main/auth/roles/role.enum';
-import { RoleGuard } from '@main/auth/roles/roles.guard';
-import { AuthGuard } from '@main/auth/authentication/auth.guard';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Roles(Role.TRAINER)
-  @UseGuards(AuthGuard, RoleGuard)
   @Post()
+  @Roles(Role.TRAINER)
   async create(@Body() data: CreateUserDto): Promise<User> {
     return this.usersService.createUser(data);
   }
@@ -46,9 +42,8 @@ export class UsersController {
     return this.usersService.update(Number(id), updateUserDto);
   }
 
-  @Roles(Role.ADMIN)
-  @UseGuards(AuthGuard, RoleGuard)
   @Delete(':id')
+  @Roles(Role.ADMIN)
   async remove(@Param('id') id: string): Promise<{ message: string }> {
     console.log('Entro al delete');
     return this.usersService.remove(Number(id));

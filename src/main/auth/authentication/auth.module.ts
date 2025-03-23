@@ -11,7 +11,7 @@ import { envConstants } from '@main/config/env-constants';
     JwtModule.register({
       global: true,
       secret: envConstants.secret,
-      signOptions: { expiresIn: '1h' },
+      signOptions: { expiresIn: '15m' },
     }),
   ],
   controllers: [AuthJwtController],

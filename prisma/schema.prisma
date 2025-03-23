@@ -55,11 +55,12 @@ model Membership {
 }
 
 model Class {
-  class_id   Int      @id @default(autoincrement())
-  name       String
-  schedule   DateTime
-  trainer_id Int      @unique
-  gym_id     Int
+  class_id    Int      @id @default(autoincrement())
+  name        String
+  description String?
+  schedule    DateTime
+  trainer_id  Int      @unique
+  gym_id      Int
 
   trainer Trainer @relation(fields: [trainer_id], references: [trainer_id])
   gym     Gym     @relation(fields: [gym_id], references: [gym_id])

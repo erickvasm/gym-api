@@ -1,28 +1,49 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from '@/main/db/prisma.service';
 import { CreateExerciseDto } from '@modules/exercises/dto/create-exercise.dto';
-import { UpdateExerciseDto } from '@modules/exercises/dto/update-exercise.dto';
 
 @Injectable()
-export class ExercisesService {
-  create(createExerciseDto: CreateExerciseDto) {
-    createExerciseDto.valueOf();
-    return 'This action adds a new exercise';
+export class ExerciseService {
+  constructor(private readonly prisma: PrismaService) {}
+
+  async create(data: CreateExerciseDto) {
+    return this.prisma.exercise.create({
+      data: {
+        name: data.name,
+        description: data.description,
+        user: { connect: { user_id: data.userId } },
+      },
+    });
   }
 
-  findAll() {
-    return `This action returns all exercises`;
+  async findAll() {
+    return this.prisma.exercise.findMany({ include: { user: true } });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} exercise`;
+  async findOne(id: number) {
+    const exercise = await this.prisma.exercise.findUnique({
+      where: { exercise_id: id },
+      include: { user: true },
+    });
+    if (!exercise) {
+      throw new NotFoundException(`Exercise with ID ${id} not found`);
+    }
+    return exercise;
   }
 
-  update(id: number, updateExerciseDto: UpdateExerciseDto) {
-    updateExerciseDto.valueOf();
-    return `This action updates a #${id} exercise`;
+  async remove(id: number) {
+    const exerciseExists = await this.prisma.exercise.findUnique({
+      where: { exercise_id: id },
+    });
+    if (!exerciseExists) {
+      throw new NotFoundException(`Exercise with ID ${id} not found`);
+    }
+    return this.prisma.exercise.delete({ where: { exercise_id: id } });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} exercise`;
+  async getUserExercises(userId: number) {
+    return this.prisma.exercise.findMany({
+      where: { user_id: userId },
+    });
   }
 }

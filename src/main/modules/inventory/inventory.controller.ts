@@ -1,15 +1,6 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { InventoryService } from '@modules/inventory/inventory.service';
 import { CreateInventoryDto } from '@modules/inventory/dto/create-inventory.dto';
-import { UpdateInventoryDto } from '@modules/inventory/dto/update-inventory.dto';
 
 @Controller('inventory')
 export class InventoryController {
@@ -26,20 +17,17 @@ export class InventoryController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.inventoryService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateInventoryDto: UpdateInventoryDto,
-  ) {
-    return this.inventoryService.update(+id, updateInventoryDto);
+  @Delete(':id')
+  remove(@Param('id') id: number) {
+    return this.inventoryService.remove(+id);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.inventoryService.remove(+id);
+  @Get('gym/:id')
+  getGymInventory(@Param('id') id: number) {
+    return this.inventoryService.getGymInventory(+id);
   }
 }

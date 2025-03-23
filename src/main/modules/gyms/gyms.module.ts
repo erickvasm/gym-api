@@ -1,12 +1,10 @@
 import { Module } from '@nestjs/common';
-import { GymsService } from '@modules/gyms/gyms.service';
-import { GymsController } from '@modules/gyms/gyms.controller';
-import { MembershipsModule } from '@modules/memberships/memberships.module';
-import { ClassesModule } from '@modules/classes/classes.module';
+import { GymService } from '@modules/gyms/gyms.service';
+import { GymController } from '@modules/gyms/gyms.controller';
+import { PrismaService } from '@/main/db/prisma.service';
 
 @Module({
-  controllers: [GymsController],
-  providers: [GymsService],
-  imports: [MembershipsModule, ClassesModule],
+  controllers: [GymController],
+  providers: [GymService, PrismaService],
 })
-export class GymsModule {}
+export class GymModule {}

@@ -1,28 +1,51 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from '@/main/db/prisma.service';
 import { CreateGymDto } from '@modules/gyms/dto/create-gym.dto';
-import { UpdateGymDto } from '@modules/gyms/dto/update-gym.dto';
 
 @Injectable()
-export class GymsService {
-  create(createGymDto: CreateGymDto) {
-    createGymDto.valueOf();
-    return 'This action adds a new gym';
+export class GymService {
+  constructor(private readonly prisma: PrismaService) {}
+
+  async create(data: CreateGymDto) {
+    return this.prisma.gym.create({
+      data: {
+        name: data.name,
+        address: data.address,
+        phone: data.phone,
+        schedule: data.schedule,
+        owner: { connect: { user_id: data.ownerId } },
+      },
+    });
   }
 
-  findAll() {
-    return `This action returns all gyms`;
+  async findAll() {
+    return this.prisma.gym.findMany({ include: { owner: true } });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} gym`;
+  async findOne(id: number) {
+    const gym = await this.prisma.gym.findUnique({
+      where: { gym_id: id },
+      include: { owner: true },
+    });
+    if (!gym) {
+      throw new NotFoundException(`Gym with ID ${id} not found`);
+    }
+    return gym;
   }
 
-  update(id: number, updateGymDto: UpdateGymDto) {
-    updateGymDto.valueOf();
-    return `This action updates a #${id} gym`;
+  async remove(id: number) {
+    const gymExists = await this.prisma.gym.findUnique({
+      where: { gym_id: id },
+    });
+    if (!gymExists) {
+      throw new NotFoundException(`Gym with ID ${id} not found`);
+    }
+    return this.prisma.gym.delete({ where: { gym_id: id } });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} gym`;
+  async getOwnerGyms(ownerId: number) {
+    return this.prisma.gym.findMany({
+      where: { owner_id: ownerId },
+    });
   }
 }

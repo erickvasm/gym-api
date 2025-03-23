@@ -6,19 +6,21 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { FastifyRequest } from 'fastify';
-import { envConstants } from '@main/config/env-constants';
+import { ConfigService } from '@nestjs/config';
 import {
   AuthRequest,
   TokenDto,
 } from '@main/auth/authentication/interface/auth.request';
 import { IS_PUBLIC_KEY } from '@main/auth/authentication/auth.public.route';
 import { Reflector } from '@nestjs/core';
+import { ConfigKeys } from '@main/config/config.keys';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
     private reflector: Reflector,
+    private configService: ConfigService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -40,7 +42,7 @@ export class AuthGuard implements CanActivate {
 
     try {
       request.user = await this.jwtService.verifyAsync<TokenDto>(token, {
-        secret: envConstants.secret,
+        secret: this.configService.get<string>(ConfigKeys.SECRET),
       });
     } catch {
       throw new UnauthorizedException('Token expired');

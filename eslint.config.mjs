@@ -38,13 +38,13 @@ export default [
         {
           selector: "MemberExpression[object.name='process'][property.name='env']",
           message:
-            "Dont use 'process.env' directly. Use 'import { env } from 'src/main/config/env' instead.",
+            "Dont use 'process.env' directly. Use 'import { env } from 'src/main/config/' instead.",
         },
       ],
     },
   },
   {
-    files: ['src/main/config/env-constants.ts'],
+    files: ['src/main/config/config.ts'],
     rules: {
       'no-restricted-syntax': 'off',
     },

@@ -3,7 +3,8 @@ import { UsersService } from '@modules/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { envConstants } from '@main/config/env-constants';
+import { ConfigService } from '@nestjs/config';
+import { ConfigKeys } from '@main/config/config.keys';
 
 @Injectable()
 export class AuthJwtService {
@@ -12,6 +13,7 @@ export class AuthJwtService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private configService: ConfigService,
   ) {}
 
   async signIn(
@@ -37,7 +39,8 @@ export class AuthJwtService {
 
     res.setCookie('refresh_token', refresh_token, {
       httpOnly: true,
-      secure: envConstants.nodeEnv === 'prod',
+      secure:
+        this.configService.get<string>(ConfigKeys.NODE_ENV) === 'production',
       sameSite: 'strict',
       path: '/',
     });

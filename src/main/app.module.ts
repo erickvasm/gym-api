@@ -10,6 +10,8 @@ import { AccessControlModule } from '@main/auth/access/access.control.module';
 import { APP_GUARD } from '@nestjs/core';
 import { RoleGuard } from '@main/auth/roles/roles.guard';
 import { AuthGuard } from '@main/auth/authentication/auth.guard';
+import { ConfigModule } from '@nestjs/config';
+import config, { validationSchema } from '@main/config/config';
 
 @Module({
   imports: [
@@ -21,6 +23,11 @@ import { AuthGuard } from '@main/auth/authentication/auth.guard';
     ClassesModule,
     TrainersModule,
     PaymentsModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [config],
+      validationSchema,
+    }),
   ],
   controllers: [],
   providers: [

@@ -1,28 +1,67 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from '@/main/db/prisma.service';
 import { CreateMembershipDto } from '@modules/memberships/dto/create-membership.dto';
 import { UpdateMembershipDto } from '@modules/memberships/dto/update-membership.dto';
 
 @Injectable()
 export class MembershipsService {
-  create(createMembershipDto: CreateMembershipDto) {
-    createMembershipDto.valueOf();
-    return 'This action adds a new membership';
+  constructor(private readonly prisma: PrismaService) {}
+
+  async create(data: CreateMembershipDto) {
+    return this.prisma.membership.create({
+      data: {
+        name: data.name,
+        duration: data.duration,
+        price: data.price,
+        description: data.description,
+        gym: { connect: { gym_id: data.gymId } },
+      },
+    });
   }
 
-  findAll() {
-    return `This action returns all memberships`;
+  async findAll() {
+    return this.prisma.membership.findMany({
+      include: { gym: true, payments: true },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} membership`;
+  async findOne(id: number) {
+    const membership = await this.prisma.membership.findUnique({
+      where: { membership_id: id },
+      include: { gym: true, payments: true },
+    });
+    if (!membership) {
+      throw new NotFoundException(`Membership with ID ${id} not found`);
+    }
+    return membership;
   }
 
-  update(id: number, updateMembershipDto: UpdateMembershipDto) {
-    updateMembershipDto.valueOf();
-    return `This action updates a #${id} membership`;
+  async update(id: number, data: UpdateMembershipDto) {
+    const membershipExists = await this.prisma.membership.findUnique({
+      where: { membership_id: id },
+    });
+    if (!membershipExists) {
+      throw new NotFoundException(`Membership with ID ${id} not found`);
+    }
+    return this.prisma.membership.update({
+      where: { membership_id: id },
+      data,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} membership`;
+  async remove(id: number) {
+    const membershipExists = await this.prisma.membership.findUnique({
+      where: { membership_id: id },
+    });
+    if (!membershipExists) {
+      throw new NotFoundException(`Membership with ID ${id} not found`);
+    }
+    return this.prisma.membership.delete({ where: { membership_id: id } });
+  }
+
+  async getGymMemberships(gymId: number) {
+    return this.prisma.membership.findMany({
+      where: { gym_id: gymId },
+    });
   }
 }

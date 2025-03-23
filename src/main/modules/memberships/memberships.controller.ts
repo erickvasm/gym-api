@@ -1,11 +1,11 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
 } from '@nestjs/common';
 import { MembershipsService } from '@modules/memberships/memberships.service';
 import { CreateMembershipDto } from '@modules/memberships/dto/create-membership.dto';
@@ -26,20 +26,25 @@ export class MembershipsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.membershipsService.findOne(+id);
   }
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() updateMembershipDto: UpdateMembershipDto,
   ) {
     return this.membershipsService.update(+id, updateMembershipDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: number) {
     return this.membershipsService.remove(+id);
+  }
+
+  @Get('gym/:id')
+  getGymMemberships(@Param('id') id: number) {
+    return this.membershipsService.getGymMemberships(+id);
   }
 }

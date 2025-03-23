@@ -7,4 +7,4 @@ import { PrismaService } from '@/main/db/prisma.service';
   controllers: [ExerciseController],
   providers: [ExerciseService, PrismaService],
 })
-export class ExerciseModule {}
+export class ExercisesModule {}

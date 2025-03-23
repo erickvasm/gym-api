@@ -1,28 +1,68 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from '@/main/db/prisma.service';
 import { CreatePaymentDto } from '@modules/payments/dto/create-payment.dto';
 import { UpdatePaymentDto } from '@modules/payments/dto/update-payment.dto';
 
 @Injectable()
 export class PaymentsService {
-  create(createPaymentDto: CreatePaymentDto) {
-    createPaymentDto.valueOf();
-    return 'This action adds a new payment';
+  constructor(private readonly prisma: PrismaService) {}
+
+  async create(data: CreatePaymentDto) {
+    return this.prisma.payment.create({
+      data: {
+        amount: data.amount,
+        date: data.date,
+        payment_method: data.payment_method,
+        user: { connect: { user_id: data.userId } },
+        membership: { connect: { membership_id: data.membershipId } },
+      },
+    });
   }
 
-  findAll() {
-    return `This action returns all payments`;
+  async findAll() {
+    return this.prisma.payment.findMany({
+      include: { user: true, membership: true },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} payment`;
+  async findOne(id: number) {
+    const payment = await this.prisma.payment.findUnique({
+      where: { payment_id: id },
+      include: { user: true, membership: true },
+    });
+    if (!payment) {
+      throw new NotFoundException(`Payment with ID ${id} not found`);
+    }
+    return payment;
   }
 
-  update(id: number, updatePaymentDto: UpdatePaymentDto) {
-    updatePaymentDto.valueOf();
-    return `This action updates a #${id} payment`;
+  async update(id: number, data: UpdatePaymentDto) {
+    const paymentExists = await this.prisma.payment.findUnique({
+      where: { payment_id: id },
+    });
+    if (!paymentExists) {
+      throw new NotFoundException(`Payment with ID ${id} not found`);
+    }
+    return this.prisma.payment.update({
+      where: { payment_id: id },
+      data,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} payment`;
+  async remove(id: number) {
+    const paymentExists = await this.prisma.payment.findUnique({
+      where: { payment_id: id },
+    });
+    if (!paymentExists) {
+      throw new NotFoundException(`Payment with ID ${id} not found`);
+    }
+    return this.prisma.payment.delete({ where: { payment_id: id } });
+  }
+
+  async getUserPayments(userId: number) {
+    return this.prisma.payment.findMany({
+      where: { user_id: userId },
+      include: { membership: true },
+    });
   }
 }

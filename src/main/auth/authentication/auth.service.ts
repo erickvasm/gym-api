@@ -61,8 +61,8 @@ export class AuthJwtService {
       const new_access_token: string = this.generateAccessToken(payload);
 
       return res.send({ access_token: new_access_token });
-    } catch {
-      throw new UnauthorizedException('Invalid refresh token');
+    } catch (error) {
+      throw new UnauthorizedException('Invalid refresh token: ' + error);
     }
   }
 

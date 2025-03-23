@@ -70,10 +70,10 @@ model Trainer {
   name       String
   specialty  String
   class_id   Int?
-  gym_id     Int
+  gym_id     Int?
 
   class Class?
-  gym   Gym    @relation(fields: [gym_id], references: [gym_id])
+  gym   Gym?   @relation(fields: [gym_id], references: [gym_id])
 }
 
 model Student {

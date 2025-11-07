@@ -1,12 +1,21 @@
 # API Endpoints - ERP Gym
 
+## Antes que todo
+
+1. Tener definido el '.env'.
+2. npx prisma migrate dev
+3. npm run dev
+4. Crear un usuario directamente en la BD
+
 ## Autenticación (Auth)
 
 ### 1. Obtener Token
+
 **POST /auth/login**  
 _Devuelve un token JWT para autenticación_
 
-**HTTPie:**  
+**HTTPie:**
+
 ```sh
 http POST http://localhost:3000/auth/login \
     Content-Type:application/json \
@@ -14,11 +23,20 @@ http POST http://localhost:3000/auth/login \
     password="123456"
 ```
 
-**cURL:**  
+**cURL:**
+
 ```sh
 curl -X POST http://localhost:3000/auth/login \
     -H "Content-Type: application/json" \
     -d '{"email": "user@example.com", "password": "123456"}'
+```
+
+### 2. Obtener el token refresh
+
+```sh
+http GET http://localhost:3000/auth/refresh \
+    Content-Type:application/json
+
 ```
 
 ---
@@ -26,10 +44,12 @@ curl -X POST http://localhost:3000/auth/login \
 ## Gimnasios (Gyms)
 
 ### 1. Crear un gimnasio
+
 **POST /gyms**  
 _Crea un nuevo gimnasio_
 
-**HTTPie:**  
+**HTTPie:**
+
 ```sh
 http POST http://localhost:3000/gyms \
     Authorization:"Bearer YOUR_TOKEN" \
@@ -38,7 +58,8 @@ http POST http://localhost:3000/gyms \
     location="Downtown"
 ```
 
-**cURL:**  
+**cURL:**
+
 ```sh
 curl -X POST http://localhost:3000/gyms \
     -H "Authorization: Bearer YOUR_TOKEN" \
@@ -47,6 +68,7 @@ curl -X POST http://localhost:3000/gyms \
 ```
 
 ### 2. Obtener todos los gimnasios
+
 **GET /gyms**  
 _Lista todos los gimnasios_
 
@@ -60,7 +82,8 @@ curl -X GET http://localhost:3000/gyms \
 ```
 
 ### 3. Obtener un gimnasio por ID
-**GET /gyms/:id**  
+
+**GET /gyms/:id**
 
 ```sh
 http GET http://localhost:3000/gyms/1 Authorization:"Bearer YOUR_TOKEN"
@@ -72,7 +95,8 @@ curl -X GET http://localhost:3000/gyms/1 \
 ```
 
 ### 4. Actualizar un gimnasio
-**PATCH /gyms/:id**  
+
+**PATCH /gyms/:id**
 
 ```sh
 http PATCH http://localhost:3000/gyms/1 \
@@ -88,7 +112,8 @@ curl -X PATCH http://localhost:3000/gyms/1 \
 ```
 
 ### 5. Eliminar un gimnasio
-**DELETE /gyms/:id**  
+
+**DELETE /gyms/:id**
 
 ```sh
 http DELETE http://localhost:3000/gyms/1 Authorization:"Bearer YOUR_TOKEN"
@@ -104,7 +129,8 @@ curl -X DELETE http://localhost:3000/gyms/1 \
 ## Usuarios (Users)
 
 ### 1. Crear un usuario
-**POST /users**  
+
+**POST /users**
 
 ```sh
 http POST http://localhost:3000/users \
@@ -122,7 +148,8 @@ curl -X POST http://localhost:3000/users \
 ```
 
 ### 2. Obtener todos los usuarios
-**GET /users**  
+
+**GET /users**
 
 ```sh
 http GET http://localhost:3000/users Authorization:"Bearer YOUR_TOKEN"
@@ -134,7 +161,8 @@ curl -X GET http://localhost:3000/users \
 ```
 
 ### 3. Obtener un usuario por ID
-**GET /users/:id**  
+
+**GET /users/:id**
 
 ```sh
 http GET http://localhost:3000/users/1 Authorization:"Bearer YOUR_TOKEN"
@@ -146,7 +174,8 @@ curl -X GET http://localhost:3000/users/1 \
 ```
 
 ### 4. Actualizar un usuario
-**PATCH /users/:id**  
+
+**PATCH /users/:id**
 
 ```sh
 http PATCH http://localhost:3000/users/1 \
@@ -162,7 +191,8 @@ curl -X PATCH http://localhost:3000/users/1 \
 ```
 
 ### 5. Eliminar un usuario
-**DELETE /users/:id**  
+
+**DELETE /users/:id**
 
 ```sh
 http DELETE http://localhost:3000/users/1 Authorization:"Bearer YOUR_TOKEN"
@@ -198,4 +228,3 @@ _(Similar a los módulos anteriores, pero adaptado para entrenadores)_
 _(Similar a los módulos anteriores, pero adaptado para pagos)_
 
 ---
-

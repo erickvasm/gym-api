@@ -34,7 +34,7 @@ export class RoleGuard implements CanActivate {
     for (const role of requiredRoles) {
       const result = this.accessControlService.isAuthorized({
         requiredRole: role,
-        currentRole: token.role,
+        currentRole: token.role as Role,
       });
 
       if (result) {

@@ -12,9 +12,10 @@ export class PaymentsService {
       data: {
         amount: data.amount,
         date: data.date,
-        payment_method: data.payment_method,
-        user: { connect: { user_id: data.userId } },
-        membership: { connect: { membership_id: data.membershipId } },
+        paymentMethod: data.paymentMethod,
+        user: { connect: { id: data.userId } },
+        membership: { connect: { id: data.membershipId } },
+        gym: { connect: { id: data.gymId } },
       },
     });
   }
@@ -27,7 +28,7 @@ export class PaymentsService {
 
   async findOne(id: number) {
     const payment = await this.prisma.payment.findUnique({
-      where: { payment_id: id },
+      where: { id: id },
       include: { user: true, membership: true },
     });
     if (!payment) {
@@ -38,30 +39,30 @@ export class PaymentsService {
 
   async update(id: number, data: UpdatePaymentDto) {
     const paymentExists = await this.prisma.payment.findUnique({
-      where: { payment_id: id },
+      where: { id: id },
     });
     if (!paymentExists) {
       throw new NotFoundException(`Payment with ID ${id} not found`);
     }
     return this.prisma.payment.update({
-      where: { payment_id: id },
+      where: { id: id },
       data,
     });
   }
 
   async remove(id: number) {
     const paymentExists = await this.prisma.payment.findUnique({
-      where: { payment_id: id },
+      where: { id: id },
     });
     if (!paymentExists) {
       throw new NotFoundException(`Payment with ID ${id} not found`);
     }
-    return this.prisma.payment.delete({ where: { payment_id: id } });
+    return this.prisma.payment.delete({ where: { id: id } });
   }
 
   async getUserPayments(userId: number) {
     return this.prisma.payment.findMany({
-      where: { user_id: userId },
+      where: { userId: userId },
       include: { membership: true },
     });
   }

@@ -1,3 +1,4 @@
+import { SignUpDto } from '@main/auth/authentication/dto/signup.dto';
 import {
   Body,
   Controller,
@@ -25,6 +26,13 @@ export class AuthJwtController {
   @Post('login')
   signIn(@Body() signInDto: Record<string, string>, @Res() res: FastifyReply) {
     return this.authService.signIn(signInDto.email, signInDto.password, res);
+  }
+
+  @HttpCode(HttpStatus.CREATED)
+  @Public()
+  @Post('signup')
+  signUp(@Body() signUpDto: SignUpDto, @Res() res: FastifyReply) {
+    return this.authService.signUp(signUpDto, res);
   }
 
   @Get('refresh')

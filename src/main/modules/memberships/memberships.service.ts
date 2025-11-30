@@ -14,7 +14,7 @@ export class MembershipsService {
         duration: data.duration,
         price: data.price,
         description: data.description,
-        gym: { connect: { gym_id: data.gymId } },
+        gym: { connect: { id: data.gymId } },
       },
     });
   }
@@ -27,7 +27,7 @@ export class MembershipsService {
 
   async findOne(id: number) {
     const membership = await this.prisma.membership.findUnique({
-      where: { membership_id: id },
+      where: { id: id },
       include: { gym: true, payments: true },
     });
     if (!membership) {
@@ -38,30 +38,30 @@ export class MembershipsService {
 
   async update(id: number, data: UpdateMembershipDto) {
     const membershipExists = await this.prisma.membership.findUnique({
-      where: { membership_id: id },
+      where: { id: id },
     });
     if (!membershipExists) {
       throw new NotFoundException(`Membership with ID ${id} not found`);
     }
     return this.prisma.membership.update({
-      where: { membership_id: id },
+      where: { id: id },
       data,
     });
   }
 
   async remove(id: number) {
     const membershipExists = await this.prisma.membership.findUnique({
-      where: { membership_id: id },
+      where: { id: id },
     });
     if (!membershipExists) {
       throw new NotFoundException(`Membership with ID ${id} not found`);
     }
-    return this.prisma.membership.delete({ where: { membership_id: id } });
+    return this.prisma.membership.delete({ where: { id: id } });
   }
 
   async getGymMemberships(gymId: number) {
     return this.prisma.membership.findMany({
-      where: { gym_id: gymId },
+      where: { gymId: gymId },
     });
   }
 }

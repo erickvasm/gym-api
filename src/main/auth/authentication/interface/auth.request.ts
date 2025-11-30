@@ -1,12 +1,13 @@
 import { FastifyRequest } from 'fastify';
-import { Role } from '@main/auth/roles/role.enum';
+import { UserRole } from '@prisma/client';
 
 export interface TokenDto {
-  role: Role;
-  userId: string;
+  sub: number;
+  email: string;
+  role: UserRole;
+  gymId: number | null;
 }
 
 export interface AuthRequest extends FastifyRequest {
-  request: { userId: string };
   user?: TokenDto;
 }

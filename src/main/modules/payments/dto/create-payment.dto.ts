@@ -10,11 +10,14 @@ export class CreatePaymentDto {
 
   @IsString()
   @MinLength(2)
-  payment_method: string;
+  paymentMethod: string;
 
   @IsNumber()
   userId: number;
 
   @IsNumber()
   membershipId: number;
+
+  @IsNumber()
+  gymId: number;
 }

@@ -12,7 +12,7 @@ export class InventoryService {
         name: data.name,
         type: data.type,
         quantity: data.quantity,
-        gym: { connect: { gym_id: data.gymId } },
+        gym: { connect: { id: data.gymId } },
       },
     });
   }
@@ -25,7 +25,7 @@ export class InventoryService {
 
   async findOne(id: number) {
     const inventory = await this.prisma.inventory.findUnique({
-      where: { product_id: id },
+      where: { id: id },
       include: { gym: true },
     });
     if (!inventory) {
@@ -36,17 +36,17 @@ export class InventoryService {
 
   async remove(id: number) {
     const inventoryExists = await this.prisma.inventory.findUnique({
-      where: { product_id: id },
+      where: { id: id },
     });
     if (!inventoryExists) {
       throw new NotFoundException(`Inventory item with ID ${id} not found`);
     }
-    return this.prisma.inventory.delete({ where: { product_id: id } });
+    return this.prisma.inventory.delete({ where: { id: id } });
   }
 
   async getGymInventory(gymId: number) {
     return this.prisma.inventory.findMany({
-      where: { gym_id: gymId },
+      where: { gymId: gymId },
     });
   }
 }

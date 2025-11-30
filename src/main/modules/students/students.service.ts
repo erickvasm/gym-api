@@ -11,9 +11,9 @@ export class StudentsService {
     return this.prisma.student.create({
       data: {
         name: data.name,
-        birth_date: data.birth_date,
-        user: { connect: { user_id: data.userId } },
-        gym: { connect: { gym_id: data.gymId } },
+        birthDate: data.birthDate,
+        user: { connect: { id: data.userId } },
+        gym: { connect: { id: data.gymId } },
       },
     });
   }
@@ -26,7 +26,7 @@ export class StudentsService {
 
   async findOne(id: number) {
     const student = await this.prisma.student.findUnique({
-      where: { student_id: id },
+      where: { id: id },
       include: { user: true, gym: true },
     });
     if (!student) {
@@ -37,30 +37,30 @@ export class StudentsService {
 
   async update(id: number, data: UpdateStudentDto) {
     const studentExists = await this.prisma.student.findUnique({
-      where: { student_id: id },
+      where: { id: id },
     });
     if (!studentExists) {
       throw new NotFoundException(`Student with ID ${id} not found`);
     }
     return this.prisma.student.update({
-      where: { student_id: id },
+      where: { id: id },
       data,
     });
   }
 
   async remove(id: number) {
     const studentExists = await this.prisma.student.findUnique({
-      where: { student_id: id },
+      where: { id: id },
     });
     if (!studentExists) {
       throw new NotFoundException(`Student with ID ${id} not found`);
     }
-    return this.prisma.student.delete({ where: { student_id: id } });
+    return this.prisma.student.delete({ where: { id: id } });
   }
 
   async getStudentGym(studentId: number) {
     return this.prisma.gym.findFirst({
-      where: { students: { some: { student_id: studentId } } },
+      where: { students: { some: { id: studentId } } },
     });
   }
 }

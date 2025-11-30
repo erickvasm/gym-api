@@ -6,7 +6,7 @@ export class CreateStudentDto {
   name: string;
 
   @IsDate()
-  birth_date: Date;
+  birthDate: Date;
 
   @IsNumber()
   userId: number;

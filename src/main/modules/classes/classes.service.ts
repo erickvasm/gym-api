@@ -12,8 +12,8 @@ export class ClassesService {
         name: data.name,
         description: data.description,
         schedule: new Date(data.date),
-        trainer_id: data.trainerId,
-        gym_id: data.gymId,
+        trainerId: data.trainerId,
+        gymId: data.gymId,
       },
     });
   }
@@ -26,7 +26,7 @@ export class ClassesService {
 
   async findOne(id: number) {
     const classData = await this.prisma.class.findUnique({
-      where: { class_id: id },
+      where: { id: id },
       include: { trainer: true, gym: true },
     });
     if (!classData) {
@@ -37,24 +37,24 @@ export class ClassesService {
 
   async remove(id: number) {
     const classExists = await this.prisma.class.findUnique({
-      where: { class_id: id },
+      where: { id: id },
     });
     if (!classExists) {
       throw new NotFoundException(`Class with ID ${id} not found`);
     }
-    return this.prisma.class.delete({ where: { class_id: id } });
+    return this.prisma.class.delete({ where: { id: id } });
   }
 
   async getGymClasses(gymId: number) {
     return this.prisma.class.findMany({
-      where: { gym_id: gymId },
+      where: { gymId: gymId },
       include: { trainer: true },
     });
   }
 
   async getInstructorClasses(instructorId: number) {
     return this.prisma.class.findMany({
-      where: { trainer_id: instructorId },
+      where: { trainerId: instructorId },
       include: { gym: true },
     });
   }

@@ -14,7 +14,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async createUser(data: CreateUserDto): Promise<User> {
+  async create(data: CreateUserDto): Promise<User> {
     try {
       const hashedPassword = await bcrypt.hash(data.password, 10);
 
@@ -35,10 +35,14 @@ export class UsersService {
     }
   }
 
+  async findGymByCode(code: string) {
+    const gym = await this.prisma.gym.findUnique({ where: { code } });
+    return gym;
+  }
+
   async findAll(): Promise<User[]> {
     return this.prisma.user.findMany({
       include: {
-        gyms: true,
         payments: true,
         exercises: true,
       },
@@ -55,9 +59,8 @@ export class UsersService {
 
   async findOne(id: number): Promise<User> {
     const user = await this.prisma.user.findUnique({
-      where: { user_id: id },
+      where: { id: id },
       include: {
-        gyms: true,
         payments: true,
         exercises: true,
       },
@@ -71,7 +74,7 @@ export class UsersService {
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     const userExists = await this.prisma.user.findUnique({
-      where: { user_id: id },
+      where: { id: id },
     });
     if (!userExists) {
       throw new NotFoundException(`User with ID ${id} not found`);
@@ -82,32 +85,26 @@ export class UsersService {
     }
 
     return this.prisma.user.update({
-      where: { user_id: id },
+      where: { id: id },
       data: updateUserDto,
     });
   }
 
   async remove(id: number): Promise<{ message: string }> {
     const userExists = await this.prisma.user.findUnique({
-      where: { user_id: id },
+      where: { id: id },
     });
     if (!userExists) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
 
-    await this.prisma.user.delete({ where: { user_id: id } });
+    await this.prisma.user.delete({ where: { id: id } });
     return { message: `User with ID ${id} deleted successfully` };
-  }
-
-  async getUserGyms(userId: number) {
-    return this.prisma.gym.findMany({
-      where: { owner_id: userId },
-    });
   }
 
   async getUserPayments(userId: number) {
     return this.prisma.payment.findMany({
-      where: { user_id: userId },
+      where: { userId: userId },
     });
   }
 }

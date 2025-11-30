@@ -8,113 +8,143 @@ datasource db {
 }
 
 enum UserRole {
-  ADMIN
+  SUPER_ADMIN
+  GYM_ADMIN
   TRAINER
+  STAFF
   STUDENT
 }
 
 model User {
-  user_id  Int      @id @default(autoincrement())
-  name     String
-  email    String   @unique
-  role     UserRole
-  password String
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  role      UserRole
+  password  String
+  gymId     Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  gyms      Gym[]
+  gym       Gym?       @relation(fields: [gymId], references: [id])
   payments  Payment[]
   exercises Exercise[]
-  students  Student[]
+  student   Student?
+  classes   Class[]
+
+  @@map("users")
 }
 
 model Gym {
-  gym_id   Int    @id @default(autoincrement())
-  name     String
-  address  String
-  phone    String
-  schedule String
-  owner_id Int    @unique
-
-  owner       User         @relation(fields: [owner_id], references: [user_id])
+  id          Int      @id @default(autoincrement())
+  name        String
+  address     String
+  phone       String
+  schedule    String
+  code        String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  users       User[]
   memberships Membership[]
   classes     Class[]
-  trainers    Trainer[]
   students    Student[]
   inventory   Inventory[]
+  payments    Payment[]
+  exercises   Exercise[]
+
+  @@map("gyms")
 }
 
 model Membership {
-  membership_id Int    @id @default(autoincrement())
-  name          String
-  duration      String
-  price         String
-  description   String
-  gym_id        Int
+  id          Int      @id @default(autoincrement())
+  name        String
+  duration    String
+  price       String
+  description String
+  gymId       Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  gym      Gym       @relation(fields: [gym_id], references: [gym_id])
+  gym      Gym       @relation(fields: [gymId], references: [id])
   payments Payment[]
+
+  @@map("memberships")
 }
 
 model Class {
-  class_id    Int      @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String
   description String?
   schedule    DateTime
-  trainer_id  Int      @unique
-  gym_id      Int
+  trainerId   Int
+  gymId       Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  trainer Trainer @relation(fields: [trainer_id], references: [trainer_id])
-  gym     Gym     @relation(fields: [gym_id], references: [gym_id])
-}
+  trainer User @relation(fields: [trainerId], references: [id])
+  gym     Gym  @relation(fields: [gymId], references: [id])
 
-model Trainer {
-  trainer_id Int    @id @default(autoincrement())
-  name       String
-  specialty  String
-  class_id   Int?
-  gym_id     Int?
-
-  class Class?
-  gym   Gym?   @relation(fields: [gym_id], references: [gym_id])
+  @@map("classes")
 }
 
 model Student {
-  student_id Int      @id @default(autoincrement())
-  name       String
-  birth_date DateTime
-  user_id    Int
-  gym_id     Int
+  id        Int      @id @default(autoincrement())
+  name      String
+  birthDate DateTime
+  userId    Int      @unique
+  gymId     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user User @relation(fields: [user_id], references: [user_id])
-  gym  Gym  @relation(fields: [gym_id], references: [gym_id])
+  user User @relation(fields: [userId], references: [id])
+  gym  Gym  @relation(fields: [gymId], references: [id])
+
+  @@map("students")
 }
 
 model Payment {
-  payment_id     Int      @id @default(autoincrement())
+  id             Int      @id @default(autoincrement())
   amount         String
   date           DateTime
-  payment_method String
-  user_id        Int
-  membership_id  Int
+  paymentMethod  String
+  userId         Int
+  membershipId   Int
+  gymId          Int
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  user       User       @relation(fields: [user_id], references: [user_id])
-  membership Membership @relation(fields: [membership_id], references: [membership_id])
+  user       User       @relation(fields: [userId], references: [id])
+  membership Membership @relation(fields: [membershipId], references: [id])
+  gym        Gym        @relation(fields: [gymId], references: [id])
+
+  @@map("payments")
 }
 
 model Inventory {
-  product_id Int    @id @default(autoincrement())
-  name       String
-  type       String
-  quantity   Int
-  gym_id     Int
+  id        Int      @id @default(autoincrement())
+  name      String
+  type      String
+  quantity  Int
+  gymId     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  gym Gym @relation(fields: [gym_id], references: [gym_id])
+  gym Gym @relation(fields: [gymId], references: [id])
+
+  @@map("inventory")
 }
 
 model Exercise {
-  exercise_id Int    @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String
   description String
-  user_id     Int
+  userId      Int
+  gymId       Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  user User @relation(fields: [user_id], references: [user_id])
+  user User @relation(fields: [userId], references: [id])
+  gym  Gym  @relation(fields: [gymId], references: [id])
+
+  @@map("exercises")
 }

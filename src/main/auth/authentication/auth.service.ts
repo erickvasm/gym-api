@@ -1,10 +1,18 @@
-import { Injectable, Req, Res, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  Req,
+  Res,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UsersService } from '@modules/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { ConfigService } from '@nestjs/config';
 import { ConfigKeys } from '@main/config/config.keys';
+import { SignUpDto } from '@main/auth/authentication/dto/signup.dto';
+import { UserRole } from '@prisma/client';
 
 @Injectable()
 export class AuthJwtService {
@@ -31,7 +39,50 @@ export class AuthJwtService {
       throw new UnauthorizedException('Invalid password credentials');
     }
 
-    const payload = { sub: user.user_id, email: user.email, role: user.role };
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+      gymId: user.gymId,
+    };
+    const access_token = this.jwtService.sign(payload, {
+      expiresIn: this.ACCESS_TOKEN_EXPIRES,
+    });
+    const refresh_token = this.jwtService.sign(payload, { expiresIn: '7d' });
+
+    res.setCookie('refresh_token', refresh_token, {
+      httpOnly: true,
+      secure:
+        this.configService.get<string>(ConfigKeys.NODE_ENV) === 'production',
+      sameSite: 'strict',
+      path: '/',
+    });
+
+    res.send({ access_token });
+  }
+
+  async signUp(signUpDto: SignUpDto, @Res() res: FastifyReply): Promise<void> {
+    const gym = await this.usersService.findGymByCode(signUpDto.gymCode);
+
+    if (!gym) {
+      throw new NotFoundException('Invalid gym code');
+    }
+
+    const user = await this.usersService.create({
+      name: signUpDto.name,
+      email: signUpDto.email,
+      password: signUpDto.password,
+      role: UserRole.STUDENT,
+      gymId: gym.id,
+    });
+
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+      gymId: user.gymId,
+    };
+
     const access_token = this.jwtService.sign(payload, {
       expiresIn: this.ACCESS_TOKEN_EXPIRES,
     });

@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from '@modules/users/users.service';
 import { UpdateUserDto } from '@modules/users/dto/update-user.dto';
@@ -13,18 +14,22 @@ import { CreateUserDto } from '@modules/users/dto/create-user.dto';
 import { User } from '@prisma/client';
 import { Roles } from '@main/auth/roles/roles.decorator';
 import { Role } from '@main/auth/roles/role.enum';
+import { AuthGuard } from '@main/auth/authentication/auth.guard';
+import { RoleGuard } from '@main/auth/roles/roles.guard';
 
 @Controller('users')
+@UseGuards(AuthGuard, RoleGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  @Roles(Role.TRAINER)
-  async create(@Body() data: CreateUserDto): Promise<User> {
-    return this.usersService.createUser(data);
+  @Post('staff')
+  @Roles(Role.GYM_ADMIN)
+  async createStaff(@Body() data: CreateUserDto): Promise<User> {
+    return this.usersService.create(data);
   }
 
   @Get()
+  @Roles(Role.GYM_ADMIN)
   async findAll(): Promise<User[]> {
     return this.usersService.findAll();
   }
@@ -43,15 +48,9 @@ export class UsersController {
   }
 
   @Delete(':id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.GYM_ADMIN)
   async remove(@Param('id') id: string): Promise<{ message: string }> {
-    console.log('Entro al delete');
     return this.usersService.remove(Number(id));
-  }
-
-  @Get(':id/gyms')
-  async getUserGyms(@Param('id') id: string) {
-    return this.usersService.getUserGyms(Number(id));
   }
 
   @Get(':id/payments')

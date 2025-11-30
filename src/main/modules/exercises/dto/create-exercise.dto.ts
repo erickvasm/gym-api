@@ -11,4 +11,7 @@ export class CreateExerciseDto {
 
   @IsNumber()
   userId: number;
+
+  @IsNumber()
+  gymId: number;
 }

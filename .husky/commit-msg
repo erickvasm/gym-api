@@ -16,6 +16,6 @@ run_command() {
 }
 
 echo "\n📋 Checking commit message format..."
-run_command npx --no-install commitlint --edit "$1" || exit 1
+run_command bunx --bun commitlint --edit "$1" || exit 1
 
 echo "\n✅ All checks passed! Proceeding with commit..."

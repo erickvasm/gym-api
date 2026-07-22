@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "main": "dist/main/main.js",
+  "packageManager": "bun@1.3.14",
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"src/test/**/*.ts\"",
@@ -88,5 +89,13 @@
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
-  }
+  },
+  "_comment_trustedDependencies": "bun blocks postinstall/preinstall scripts by default; these are trusted because they build/download native binaries or engines required at runtime (bcrypt native bindings, Prisma query engines, swc compiler binary).",
+  "trustedDependencies": [
+    "@prisma/client",
+    "@prisma/engines",
+    "@swc/core",
+    "bcrypt",
+    "prisma"
+  ]
 }

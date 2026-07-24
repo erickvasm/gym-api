@@ -3,8 +3,8 @@
 ## Antes que todo
 
 1. Tener definido el '.env'.
-2. npx prisma migrate dev
-3. npm run dev
+2. bunx prisma migrate dev
+3. bun run dev
 4. Crear un usuario directamente en la BD
 
 ## Autenticación (Auth)

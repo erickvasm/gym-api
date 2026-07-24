@@ -16,9 +16,9 @@ run_command() {
 }
 
 echo "\n📝 Running Prettier..."
-run_command npm run format || exit 1
+run_command bun run format || exit 1
 
 echo "\n🔍 Running ESLint..."
-run_command npm run lint || exit 1
+run_command bun run lint || exit 1
 
 echo "\n✅ All checks passed! Proceeding with commit..."
